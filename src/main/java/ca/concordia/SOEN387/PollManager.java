@@ -4,7 +4,11 @@ import java.util.List;
 
 public class PollManager extends User {
 
-    public PollManager() {
+    Poll poll;
+
+    public PollManager(String name) {
+        this.name = name;
+        this.poll = Poll.getInstance();
     }
 
     public void createPoll(String name, String question, List<String> choices) {
@@ -25,9 +29,4 @@ public class PollManager extends User {
     public void releasePoll() {}
 
     public void unreleasePoll() {}
-
-    public void vote() {}
-
-
-
 }
