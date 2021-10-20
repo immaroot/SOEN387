@@ -1,13 +1,12 @@
 package ca.concordia.SOEN387;
 
 public class Participant extends User {
-    Poll poll;
 
-    public Participant(String name) {
-        this.name = name;
-        this.poll = Poll.getInstance();
+    public Participant(String name, Poll poll) {
+        super(name, poll);
     }
 
-    public void vote() {}
-
+    public void vote(Choice answer) throws PollException {
+       poll.addVote(this, answer);
+    }
 }

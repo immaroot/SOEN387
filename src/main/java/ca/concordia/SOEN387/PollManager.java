@@ -4,29 +4,39 @@ import java.util.List;
 
 public class PollManager extends User {
 
-    Poll poll;
-
     public PollManager(String name) {
-        this.name = name;
-        this.poll = Poll.getInstance();
+        super(name, new Poll());
     }
 
-    public void createPoll(String name, String question, List<String> choices) {
+    public void createPoll(String name, String question, List<Choice> choices) throws PollException {
+        poll.create(name, question, choices);
     }
 
-    public void updatePoll(String name, String question, List<String> choices) {
+    public void updatePoll(String name, String question, List<Choice> choices) throws PollException {
+        poll.update(name, question, choices);
     }
 
-    public void clearPoll() {
+    public void clearPoll() throws PollException {
+        poll.clear();
     }
 
-    public void closePoll() {
+    public void closePoll() throws PollException {
+        poll.close();
     }
 
-    public void runPoll() {
+    public void runPoll() throws PollException {
+        poll.run();
     }
 
-    public void releasePoll() {}
+    public void releasePoll() throws PollException {
+        poll.release();
+    }
 
-    public void unreleasePoll() {}
+    public void unreleasePoll() throws PollException {
+        poll.unrelease();
+    }
+
+    public Poll getPoll() {
+        return poll;
+    }
 }
