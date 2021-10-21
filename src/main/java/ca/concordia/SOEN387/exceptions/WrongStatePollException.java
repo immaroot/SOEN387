@@ -1,4 +1,4 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.exceptions;
 
 public class WrongStatePollException extends PollException {
 

@@ -1,4 +1,4 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
 
 import java.io.File;
 import java.io.FileWriter;

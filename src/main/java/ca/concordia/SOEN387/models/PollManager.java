@@ -1,11 +1,13 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
+
+import ca.concordia.SOEN387.exceptions.PollException;
 
 import java.util.List;
 
 public class PollManager extends User {
 
     public PollManager(String name) {
-        super(name, new Poll());
+        super(name, Poll.getInstance());
     }
 
     public void createPoll(String name, String question, List<Choice> choices) throws PollException {

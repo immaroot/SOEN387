@@ -1,4 +1,7 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
+
+import ca.concordia.SOEN387.exceptions.ClosedPollException;
+import ca.concordia.SOEN387.exceptions.PollException;
 
 import java.io.IOException;
 import java.io.PrintWriter;

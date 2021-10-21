@@ -1,4 +1,4 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
 
 import java.util.Objects;
 
@@ -14,6 +14,14 @@ public class Choice {
     public Choice(String title, String description) {
         this.title       = title;
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override

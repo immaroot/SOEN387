@@ -1,5 +1,11 @@
 package ca.concordia.SOEN387;
 
+import ca.concordia.SOEN387.exceptions.ClosedPollException;
+import ca.concordia.SOEN387.exceptions.PollException;
+import ca.concordia.SOEN387.exceptions.WrongStatePollException;
+import ca.concordia.SOEN387.models.Poll;
+import ca.concordia.SOEN387.models.PollManager;
+import ca.concordia.SOEN387.models.PollReadyState;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,7 +14,7 @@ class PollTest {
 
     @Test
     void testDelete() throws PollException {
-        Poll poll = new Poll();
+        Poll poll = Poll.getInstance();
         poll.create(null, null, null);
         assert(poll.getState().getClass() == PollReadyState.class);
     }

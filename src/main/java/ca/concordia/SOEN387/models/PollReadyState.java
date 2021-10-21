@@ -1,4 +1,9 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
+
+import ca.concordia.SOEN387.exceptions.AlreadyExistPollException;
+import ca.concordia.SOEN387.exceptions.PollException;
+import ca.concordia.SOEN387.exceptions.WrongChoicePollException;
+import ca.concordia.SOEN387.exceptions.WrongStatePollException;
 
 import java.io.PrintWriter;
 import java.util.Hashtable;
@@ -12,7 +17,7 @@ public class PollReadyState extends PollState {
 
     @Override
     public void create(String name, String question, List<Choice> choices) throws PollException {
-        throw new AlreadyExistPoll("Cannot create new poll if it already exists.");
+        throw new AlreadyExistPollException("Cannot create new poll if it already exists.");
     }
 
     @Override

@@ -1,5 +1,9 @@
 package ca.concordia.SOEN387;
 
+import ca.concordia.SOEN387.exceptions.PollException;
+import ca.concordia.SOEN387.models.Choice;
+import ca.concordia.SOEN387.models.Participant;
+import ca.concordia.SOEN387.models.PollManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;

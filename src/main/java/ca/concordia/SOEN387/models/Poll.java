@@ -1,11 +1,15 @@
-package ca.concordia.SOEN387;
+package ca.concordia.SOEN387.models;
 
+import ca.concordia.SOEN387.exceptions.PollException;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-public class Poll {
+public class Poll implements Serializable {
 
+    private static Poll poll;
     private String name, question;
     private PollStatus status;
     private List<Choice> choices;
@@ -13,12 +17,21 @@ public class Poll {
     private final Hashtable<Participant, Choice> participantVotes;
     private PollState state;
 
-    public Poll() {
+    private Poll() {
         this.state = new PollClosedState(this);
         this.status = PollStatus.CREATED;
         this.choices = new ArrayList<>();
         this.votes = new Hashtable<>();
         this.participantVotes = new Hashtable<>();
+        poll = this;
+    }
+
+    public static Poll getInstance() {
+        if (poll == null) {
+            return new Poll();
+        } else {
+            return poll;
+        }
     }
 
     public void create(String name, String question, List<Choice> choices) throws PollException {
@@ -71,6 +84,14 @@ public class Poll {
         this.question = question;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
     protected PollStatus getStatus() {
         return status;
     }
@@ -97,5 +118,18 @@ public class Poll {
 
     public Object getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return "Poll{" +
+                "name='" + name + '\'' +
+                ", question='" + question + '\'' +
+                ", status=" + status +
+                ", choices=" + choices +
+                ", votes=" + votes +
+                ", participantVotes=" + participantVotes +
+                ", state=" + state +
+                '}';
     }
 }
