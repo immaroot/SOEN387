@@ -24,7 +24,9 @@ public class VoteServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        manager = new PollManager("Joe");
+        manager = (PollManager) getServletContext().getAttribute("manager");
+        System.out.println("From VoteServlet we have the pollmanager called: " + manager.getName());
+
         poll = manager.getPoll();
         choiceHashMap = new HashMap<>();
 
@@ -52,7 +54,7 @@ public class VoteServlet extends HttpServlet {
         try {
             manager.createPoll("Favorite Fruits", "What is your favorite fruit?", choices);
         } catch (PollException e) {
-            e.printStackTrace();
+            throw new ServletException(e);
         }
 
         try {
@@ -118,6 +120,7 @@ public class VoteServlet extends HttpServlet {
             if (choice != null) {
                 try {
                     user.vote(choice);
+                    System.out.println("The user with id: " + user.getName() + " just voted.");
                     response.setContentType("text/html");
                     request.setAttribute("vote", choice);
                     RequestDispatcher rd = request.getRequestDispatcher("./success_vote.jsp");
