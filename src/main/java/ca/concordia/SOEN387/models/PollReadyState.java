@@ -5,7 +5,6 @@ import ca.concordia.SOEN387.exceptions.PollException;
 import ca.concordia.SOEN387.exceptions.WrongChoicePollException;
 import ca.concordia.SOEN387.exceptions.WrongStatePollException;
 
-import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -84,6 +83,10 @@ public class PollReadyState extends PollState {
     public void addVote(Participant participant, Choice answer) throws PollException {
         if (poll.getStatus() == PollStatus.RUNNING) {
             if (poll.getChoices().contains(answer)) {
+                if (poll.getParticipantVotes().containsKey(participant)) {
+                    Choice option = poll.getParticipantVotes().get(participant);
+                    poll.removeVote(participant, option);
+                }
                 int numVotes = poll.getVotes().get(answer) == null ? 0 : poll.getVotes().get(answer);
                 poll.getVotes().put(answer, ++numVotes);
                 poll.getParticipantVotes().put(participant, answer);
@@ -96,15 +99,14 @@ public class PollReadyState extends PollState {
     }
 
     @Override
-    public Hashtable<String, Integer> getResults() {
-        Hashtable<String, Integer> results = new Hashtable<>();
-        poll.getVotes().forEach((key, value) -> results.put(key.toString(), value));
-        return results;
-    }
-
-    @Override
-    public void downloadPollDetails(PrintWriter printWriter, String filename) {
-
+    public Hashtable<String, Integer> getResults() throws WrongStatePollException {
+        if (poll.getStatus() == PollStatus.RELEASED) {
+            Hashtable<String, Integer> results = new Hashtable<>();
+            poll.getVotes().forEach((key, value) -> results.put(key.toString(), value));
+            return results;
+        } else {
+            throw new WrongStatePollException("A Poll not in RELEASE state cannot get results.");
+        }
     }
 
 

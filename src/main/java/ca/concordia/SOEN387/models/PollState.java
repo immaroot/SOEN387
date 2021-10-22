@@ -2,6 +2,7 @@ package ca.concordia.SOEN387.models;
 
 import ca.concordia.SOEN387.exceptions.ClosedPollException;
 import ca.concordia.SOEN387.exceptions.PollException;
+import ca.concordia.SOEN387.exceptions.WrongStatePollException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,6 +34,4 @@ public abstract class PollState {
     abstract public void addVote(Participant participant, Choice answer) throws PollException;
 
     abstract public Hashtable<String, Integer> getResults() throws PollException;
-
-    abstract public void downloadPollDetails(PrintWriter printWriter, String filename) throws IOException, ClosedPollException;
 }

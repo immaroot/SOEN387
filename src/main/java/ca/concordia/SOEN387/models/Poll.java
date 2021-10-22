@@ -66,10 +66,14 @@ public class Poll implements Serializable {
         state.addVote(participant, answer);
     }
 
-    public Hashtable<String, Integer> getResults() {
-        Hashtable<String, Integer> results = new Hashtable<>();
-        votes.forEach((key, value) -> results.put(key.toString(), value));
-        return results;
+    public void removeVote(Participant participant, Choice choice) {
+        int currentNumberOfVotes = votes.get(choice);
+        votes.put(choice, --currentNumberOfVotes);
+        participantVotes.remove(participant);
+    }
+
+    public Hashtable<String, Integer> getResults() throws PollException {
+        return state.getResults();
     }
 
     public void changeState(PollState state) {

@@ -19,6 +19,7 @@ public class PollClosedState extends PollState{
         poll.setName(name);
         poll.setQuestion(question);
         poll.setChoices(choices);
+        poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
         poll.changeState(new PollReadyState(poll));
     }
 
@@ -59,11 +60,6 @@ public class PollClosedState extends PollState{
 
     @Override
     public Hashtable<String, Integer> getResults() throws PollException {
-        throw new ClosedPollException();
-    }
-
-    @Override
-    public void downloadPollDetails(PrintWriter printWriter, String filename) throws  ClosedPollException {
         throw new ClosedPollException();
     }
 }

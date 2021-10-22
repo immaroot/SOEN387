@@ -39,7 +39,7 @@
                                                 </small>
                                             </label>
                                         </p>
-                                        <input type="radio" id="option${loop.count}" name="option" value="${loop.count}">
+                                        <input type="radio" id="option${loop.count}" name="option" value="${option.title}">
                                     </li>
                                 </c:forEach>
                                 </ul>

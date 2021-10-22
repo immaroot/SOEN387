@@ -12,14 +12,17 @@
     <div class="card mx-auto my-auto p-5">
         <div class="card-body justify-content-center">
             <div class="mx-auto my-auto justify-content-center">
-                <h2>
-                    Thank you for voting!!
-                </h2>
-                <br />
-                <jsp:useBean id="vote" scope="request" type="ca.concordia.SOEN387.models.Choice" />
-                <h4>
-                    you have voted for ${vote.title}!
-                </h4>
+                <jsp:useBean id="results" scope="request" type="java.util.HashMap<java.lang.String,java.lang.Integer>"/>
+                <c:forEach items="${results}" var="entry">
+                    <div class="list-group">
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <p>${entry.key}</p>
+                                <p>${entry.value}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </c:forEach>
             </div>
         </div>
     </div>
