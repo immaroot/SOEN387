@@ -96,7 +96,7 @@ public class Poll implements Serializable {
         return question;
     }
 
-    protected PollStatus getStatus() {
+    public PollStatus getStatus() {
         return status;
     }
 
@@ -120,8 +120,12 @@ public class Poll implements Serializable {
         return participantVotes;
     }
 
-    public Object getState() {
+    protected Object getState() {
         return state;
+    }
+
+    public boolean isOpen() {
+        return state.getClass() == PollReadyState.class;
     }
 
     @Override

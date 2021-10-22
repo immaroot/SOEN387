@@ -16,7 +16,7 @@ class PollTest {
     void testDelete() throws PollException {
         Poll poll = Poll.getInstance();
         poll.create(null, null, null);
-        assert(poll.getState().getClass() == PollReadyState.class);
+        assert(poll.isOpen());
     }
 
     @Test

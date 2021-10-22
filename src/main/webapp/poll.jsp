@@ -25,7 +25,7 @@
                             ${poll.question}
                         </h4>
                         <div class="card-body">
-                            <form action="${pageContext.request.contextPath}/poll" method="post">
+                            <form action="${pageContext.request.contextPath}/" method="post">
                                 <ul class="list-group mb-3">
                                 <c:forEach items="${poll.choices}" var="option" varStatus="loop">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">

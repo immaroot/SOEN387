@@ -1,6 +1,8 @@
 package ca.concordia.SOEN387.controllers;
 
+import ca.concordia.SOEN387.exceptions.ClosedPollException;
 import ca.concordia.SOEN387.exceptions.PollException;
+import ca.concordia.SOEN387.exceptions.WrongChoicePollException;
 import ca.concordia.SOEN387.models.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -13,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@WebServlet(name = "VoteServlet", value = "/poll")
+@WebServlet(name = "VoteServlet", value = "/")
 public class VoteServlet extends HttpServlet {
     PollManager manager;
     Poll poll;
@@ -56,66 +58,108 @@ public class VoteServlet extends HttpServlet {
         try {
             manager.runPoll();
         } catch (PollException e) {
-            e.printStackTrace();
+            throw new ServletException(e);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         response.setContentType("text/html");
-        RequestDispatcher rd = request.getRequestDispatcher("./poll.jsp");
-        request.setAttribute("poll", poll);
-        rd.forward(request, response);
+
+        if (poll.isOpen()) {
+            PollStatus status = poll.getStatus();
+            switch (status) {
+                case CREATED:
+                    pollCreated(request, response);
+                    break;
+                case RUNNING:
+                    pollRunning(request, response);
+                    break;
+                case RELEASED:
+                    pollReleased(request, response);
+                    break;
+                default:
+                    throw new ServletException("Don't know what happened.... :(");
+            }
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Cookie[] cookies = request.getCookies();
+        if (poll.isOpen() && poll.getStatus() == PollStatus.RUNNING) {
+            Cookie[] cookies = request.getCookies();
 
-        String sessionId = null;
-        Participant user;
+            String sessionId = null;
+            Participant user;
 
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("sessionId")) {
-                sessionId = cookie.getValue();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("sessionId")) {
+                    sessionId = cookie.getValue();
+                }
             }
-        }
 
-        if (sessionId == null) {
-            sessionId = generateSessionId();
-            Cookie c = new Cookie("sessionId", sessionId);
-            response.addCookie(c);
-        }
-
-        user = new Participant(sessionId, poll);
-        String voteOption = request.getParameter("option");
-        Choice choice = null;
-        for (Choice option : poll.getChoices()) {
-            if (option.getTitle().equals(voteOption)) {
-                choice = option;
+            if (sessionId == null) {
+                sessionId = generateSessionId();
+                Cookie c = new Cookie("sessionId", sessionId);
+                response.addCookie(c);
             }
-        }
 
-        if (choice != null) {
-            try {
-                user.vote(choice);
-                response.setContentType("text/html");
-                request.setAttribute("vote", choice);
-                RequestDispatcher rd = request.getRequestDispatcher("./success_vote.jsp");
-                rd.forward(request, response);
-            } catch (PollException e) {
-                e.printStackTrace();
-                throw new ServletException(e);
+            user = new Participant(sessionId, poll);
+            String voteOption = request.getParameter("option");
+            Choice choice = null;
+            for (Choice option : poll.getChoices()) {
+                if (option.getTitle().equals(voteOption)) {
+                    choice = option;
+                }
+            }
+
+            if (choice != null) {
+                try {
+                    user.vote(choice);
+                    response.setContentType("text/html");
+                    request.setAttribute("vote", choice);
+                    RequestDispatcher rd = request.getRequestDispatcher("./success_vote.jsp");
+                    rd.forward(request, response);
+                } catch (PollException e) {
+                    throw new ServletException(e);
+                }
+            } else {
+                try {
+                    throw new WrongChoicePollException("The choice selected does not exists..");
+                } catch (WrongChoicePollException e) {
+                    throw new ServletException(e);
+                }
             }
         } else {
-            System.out.println("Could not find the choice..");
+            try {
+                throw new ClosedPollException("The poll is not yet opened or not RUNNING.");
+            } catch (ClosedPollException e) {
+                throw new ServletException(e);
+            }
         }
     }
 
     private static String generateSessionId() {
         String uid = UUID.randomUUID().toString();
         return URLEncoder.encode(uid);
+    }
+
+    private void pollReleased(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher rd = request.getRequestDispatcher("/results");
+        rd.forward(request, response);
+    }
+
+    private void pollRunning(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher rd = request.getRequestDispatcher("./poll.jsp");
+        request.setAttribute("poll", poll);
+        rd.forward(request, response);
+    }
+
+    private void pollCreated(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        throw new ServletException("No Available Poll Yet! :)");
+        RequestDispatcher rd = request.getRequestDispatcher("./no_poll.jsp");
+        rd.forward(request, response);
     }
 }
