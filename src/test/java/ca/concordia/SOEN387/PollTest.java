@@ -5,7 +5,6 @@ import ca.concordia.SOEN387.exceptions.PollException;
 import ca.concordia.SOEN387.exceptions.WrongStatePollException;
 import ca.concordia.SOEN387.models.Poll;
 import ca.concordia.SOEN387.models.PollManager;
-import ca.concordia.SOEN387.models.PollReadyState;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

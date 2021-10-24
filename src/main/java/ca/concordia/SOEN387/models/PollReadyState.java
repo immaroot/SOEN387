@@ -25,6 +25,8 @@ public class PollReadyState extends PollState {
             poll.setName(name);
             poll.setQuestion(question);
             poll.setChoices(choices);
+            poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
+            if (poll.getStatus() == PollStatus.RUNNING) poll.clear();
             poll.setStatus(PollStatus.CREATED);
         } else {
             throw new WrongStatePollException("A Poll not in CREATED or RUNNING state cannot be created.");
@@ -102,7 +104,7 @@ public class PollReadyState extends PollState {
     public Hashtable<String, Integer> getResults() throws WrongStatePollException {
         if (poll.getStatus() == PollStatus.RELEASED) {
             Hashtable<String, Integer> results = new Hashtable<>();
-            poll.getVotes().forEach((key, value) -> results.put(key.toString(), value));
+            poll.getVotes().forEach((key, value) -> results.put(key.getTitle(), value));
             return results;
         } else {
             throw new WrongStatePollException("A Poll not in RELEASE state cannot get results.");

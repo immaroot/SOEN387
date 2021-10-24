@@ -27,19 +27,19 @@
                         <div class="card-body">
                             <form action="${pageContext.request.contextPath}/" method="post">
                                 <ul class="list-group mb-3">
-                                <c:forEach items="${poll.choices}" var="option" varStatus="loop">
+                                <c:forEach items="${poll.choices}" var="choice" varStatus="loop">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <p>
-                                            <label for="option${loop.count}">
-                                                <strong>${option.title}</strong> <br>
+                                            <label for="choice${loop.count}">
+                                                <strong>${choice.title}</strong> <br>
                                                 <small class="text-muted">
-                                                <c:if test="${option.description != null}">
-                                                    ${option.description}
+                                                <c:if test="${choice.description != null}">
+                                                    ${choice.description}
                                                 </c:if>
                                                 </small>
                                             </label>
                                         </p>
-                                        <input type="radio" id="option${loop.count}" name="option" value="${option.title}">
+                                        <input type="radio" id="choice${loop.count}" name="choice" value="${choice.title}">
                                     </li>
                                 </c:forEach>
                                 </ul>

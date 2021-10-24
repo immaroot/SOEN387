@@ -51,7 +51,7 @@ public class Poll implements Serializable {
     }
 
     public void release() throws PollException {
-        state.clear();
+        state.release();
     }
 
     public void unrelease() throws PollException {

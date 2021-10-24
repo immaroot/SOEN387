@@ -27,7 +27,7 @@ public class VoteServlet extends HttpServlet {
         manager = (PollManager) getServletContext().getAttribute("manager");
         System.out.println("From VoteServlet we have the pollmanager called: " + manager.getName());
 
-        poll = manager.getPoll();
+        poll          = manager.getPoll();
         choiceHashMap = new HashMap<>();
 
         Choice option1 = new Choice("banana");
@@ -84,6 +84,8 @@ public class VoteServlet extends HttpServlet {
                 default:
                     throw new ServletException("Don't know what happened.... :(");
             }
+        } else {
+            pollClosed(request, response);
         }
     }
 
@@ -91,29 +93,19 @@ public class VoteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         if (poll.isOpen() && poll.getStatus() == PollStatus.RUNNING) {
-            Cookie[] cookies = request.getCookies();
 
-            String sessionId = null;
-            Participant user;
+            Participant user = (Participant) request.getSession(false).getAttribute("user");
 
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("sessionId")) {
-                    sessionId = cookie.getValue();
-                }
+            if (user == null) {
+                throw new ServletException("No user is tracked.. Should not happen");
             }
 
-            if (sessionId == null) {
-                sessionId = generateSessionId();
-                Cookie c = new Cookie("sessionId", sessionId);
-                response.addCookie(c);
-            }
-
-            user = new Participant(sessionId, poll);
-            String voteOption = request.getParameter("option");
+            String voteOption = request.getParameter("choice");
             Choice choice = null;
             for (Choice option : poll.getChoices()) {
                 if (option.getTitle().equals(voteOption)) {
                     choice = option;
+                    break;
                 }
             }
 
@@ -144,11 +136,6 @@ public class VoteServlet extends HttpServlet {
         }
     }
 
-    private static String generateSessionId() {
-        String uid = UUID.randomUUID().toString();
-        return URLEncoder.encode(uid);
-    }
-
     private void pollReleased(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher rd = request.getRequestDispatcher("/results");
         rd.forward(request, response);
@@ -161,7 +148,11 @@ public class VoteServlet extends HttpServlet {
     }
 
     private void pollCreated(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        throw new ServletException("No Available Poll Yet! :)");
+        RequestDispatcher rd = request.getRequestDispatcher("./no_poll.jsp");
+        rd.forward(request, response);
+    }
+
+    private void pollClosed(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher rd = request.getRequestDispatcher("./no_poll.jsp");
         rd.forward(request, response);
     }

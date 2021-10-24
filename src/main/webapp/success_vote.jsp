@@ -9,17 +9,26 @@
 </head>
 <body>
 <div class="container pt-5">
-    <div class="card mx-auto my-auto p-5">
-        <div class="card-body justify-content-center">
-            <div class="mx-auto my-auto justify-content-center">
-                <h2>
-                    Thank you for voting!!
-                </h2>
-                <br />
-                <jsp:useBean id="vote" scope="request" type="ca.concordia.SOEN387.models.Choice" />
-                <h4>
-                    you have voted for ${vote.title}!
-                </h4>
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
+            <div class="row pb-5">
+                <div class="col">
+                    <h2 class="text-center">Thank you for voting!</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mx-auto my-auto justify-content-center p-5">
+                                <jsp:useBean id="vote" scope="request" type="ca.concordia.SOEN387.models.Choice" />
+                                <h4 class="text-center">
+                                    You have voted for: ${vote.title}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

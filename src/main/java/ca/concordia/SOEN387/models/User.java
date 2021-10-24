@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -24,17 +26,9 @@ public class User {
     }
 
     public void downloadPollDetails(PrintWriter printWriter, String filename) throws IOException, PollException {
-        File file = new File(filename);
-        FileWriter fw = new FileWriter(file);
         getPollResults().forEach((s, integer) -> {
-            try {
-                fw.write(s + ":" + integer.toString() + "\n");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            printWriter.write(s + ": \t\t\t" + integer.toString() + "\n");
         });
-        fw.flush();
-        fw.close();
     }
 
     public String getName() {

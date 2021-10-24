@@ -4,8 +4,8 @@ import ca.concordia.SOEN387.exceptions.PollException;
 
 public class Participant extends User {
 
-    public Participant(String name, Poll poll) {
-        super(name, poll);
+    public Participant(String name) {
+        super(name, Poll.getInstance());
     }
 
     public void vote(Choice answer) throws PollException {

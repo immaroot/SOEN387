@@ -9,20 +9,45 @@
 </head>
 <body>
 <div class="container pt-5">
-    <div class="card mx-auto my-auto p-5">
-        <div class="card-body justify-content-center">
-            <div class="mx-auto my-auto justify-content-center">
-                <jsp:useBean id="results" scope="request" type="java.util.HashMap<java.lang.String,java.lang.Integer>"/>
-                <c:forEach items="${results}" var="entry">
-                    <div class="list-group">
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <p>${entry.key}</p>
-                                <p>${entry.value}</p>
-                            </li>
-                        </ul>
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
+            <div class="row pb-5">
+                <div class="col">
+                    <h2 class="text-center">The Results</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body justify-content-center">
+                            <div class="mx-auto my-auto justify-content-center">
+                                <jsp:useBean id="results" scope="request" type="java.util.HashMap<java.lang.String,java.lang.Integer>"/>
+                                <c:forEach items="${results}" var="entry">
+                                    <div class="list-group">
+                                        <ul class="list-group mb-3">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <p>${entry.key}</p>
+                                                <p>${entry.value}</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <form action="${pageContext.request.contextPath}/download" method="get">
+                                <div class="form-group">
+                                    <label for="format">Choose format to download</label>
+                                    <select class="form-control" id="format">
+                                        <option>rows</option>
+                                        <option>csv</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">Download</button>
+                            </form>
+                        </div>
                     </div>
-                </c:forEach>
+                </div>
             </div>
         </div>
     </div>

@@ -9,20 +9,17 @@
 </head>
 <body>
 <div class="container pt-5">
-    <div class="row d-flex justify-content-center">
-        <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body justify-content-center">
-                            <div class="mx-auto my-auto justify-content-center">
-                                <h2 class="text-center">
-                                    The poll is not running yet!
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="card mx-auto my-auto p-5">
+        <div class="card-body justify-content-center">
+            <div class="mx-auto my-auto justify-content-center">
+                <c:if test="${requestScope.message != null}">
+                    ${requestScope.message}
+                </c:if>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <label for="pass">Please enter the password</label>
+                    <input type="password" name="password" id="pass">
+                    <button type="submit">submit</button>
+                </form>
             </div>
         </div>
     </div>
