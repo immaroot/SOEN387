@@ -9,11 +9,9 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 @WebServlet(name = "VoteServlet", value = "/")
 public class VoteServlet extends HttpServlet {

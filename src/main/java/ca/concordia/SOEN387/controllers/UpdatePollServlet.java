@@ -9,10 +9,9 @@ import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@WebServlet(name = "UpdatePollServlet", value = "/update")
+@WebServlet(name = "UpdatePollServlet", value = "/admin/update")
 public class UpdatePollServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

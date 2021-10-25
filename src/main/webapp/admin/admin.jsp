@@ -30,7 +30,7 @@
                             </h4>
                         </div>
                         <div class="card-footer">
-                            <form action="${pageContext.request.contextPath}/admin" method="post">
+                            <form action="admin" method="post">
                                 <div class="d-flex justify-content-between">
                                     <div>
                                     <c:choose>

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "CreatePollServlet", value = "/create")
+@WebServlet(name = "CreatePollServlet", value = "/admin/create")
 public class CreatePollServlet extends HttpServlet {
 
     @Override

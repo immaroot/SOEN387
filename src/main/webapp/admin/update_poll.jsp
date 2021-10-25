@@ -23,7 +23,7 @@
       <div class="row">
         <div class="col">
           <div class="card">
-            <form action="${pageContext.request.contextPath}/update" method="post">
+            <form action="${pageContext.request.contextPath}/admin/update" method="post">
               <div class="card-body">
                 <div class="row">
                     <div class="mb-5 px-4">

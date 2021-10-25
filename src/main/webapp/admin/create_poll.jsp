@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
-                        <form action="${pageContext.request.contextPath}/create" method="post">
+                        <form action="${pageContext.request.contextPath}/admin/create" method="post">
                             <div class="card-body">
                                     <div class="row">
                                         <div class="mb-5 px-4">

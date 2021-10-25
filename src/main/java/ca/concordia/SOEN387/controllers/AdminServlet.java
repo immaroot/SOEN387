@@ -3,7 +3,6 @@ package ca.concordia.SOEN387.controllers;
 import ca.concordia.SOEN387.exceptions.PollException;
 import ca.concordia.SOEN387.models.Poll;
 import ca.concordia.SOEN387.models.PollManager;
-import ca.concordia.SOEN387.models.PollStatus;
 import ca.concordia.SOEN387.models.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -13,6 +12,7 @@ import java.io.IOException;
 
 @WebServlet(name = "AdminServlet", value = "/admin")
 public class AdminServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -21,7 +21,7 @@ public class AdminServlet extends HttpServlet {
 
         request.setAttribute("status", poll.getStatus().name());
         request.setAttribute("pollIsOpen", poll.isOpen());
-        RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("admin/admin.jsp");
         rd.forward(request, response);
     }
 
@@ -47,10 +47,10 @@ public class AdminServlet extends HttpServlet {
 
         switch (action) {
             case "create":
-                redirectPage = "/admin/create_poll";
+                redirectPage = "/admin/create";
                 break;
             case "update":
-                redirectPage = "/admin/update_poll";
+                redirectPage = "/admin/update";
                 break;
             case "release":
                 try {
