@@ -1,50 +1,14 @@
-package ca.concordia.poll.core;
+package ca.concordia.poll.core.users;
 
+import ca.concordia.poll.core.Choice;
 import ca.concordia.poll.core.exceptions.PollException;
 
 import java.util.List;
 
-public class PollManager extends UserBase {
-
-    private int userID;
-    private String fullName;
-    private String email;
-    private String password;
+public class PollManager extends AuthenticatedUser {
 
     public PollManager() {
         super();
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void createPoll(String name, String question, List<Choice> choices) throws PollException {
@@ -73,15 +37,5 @@ public class PollManager extends UserBase {
 
     public void unreleasePoll() throws PollException {
         getPoll().unrelease();
-    }
-
-    @Override
-    public String toString() {
-        return "PollManager{" +
-                "userID=" + userID +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
     }
 }
