@@ -5,24 +5,29 @@ import ca.concordia.poll.core.exceptions.PollException;
 import ca.concordia.poll.core.exceptions.WrongChoicePollException;
 import ca.concordia.poll.core.exceptions.WrongStatePollException;
 
+import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PollReadyState extends PollState {
+
+    final static String charsForPin = "1234567890";
 
     public PollReadyState(Poll poll) {
         super(poll);
     }
 
     @Override
-    public void create(String name, String question, List<Choice> choices) throws PollException {
+    public void create(String title, String question, List<Choice> choices) throws PollException {
         throw new AlreadyExistPollException("Cannot create new poll if it already exists.");
     }
 
     @Override
-    public void update(String name, String question, List<Choice> choices) throws PollException {
+    public void update(String title, String question, List<Choice> choices) throws PollException {
         if (poll.getStatus() == PollStatus.CREATED || poll.getStatus() == PollStatus.RUNNING) {
-            poll.setName(name);
+            poll.setTitle(title);
             poll.setQuestion(question);
             poll.setChoices(choices);
             poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
@@ -82,21 +87,27 @@ public class PollReadyState extends PollState {
     }
 
     @Override
-    public void addVote(Participant participant, Choice answer) throws PollException {
-        if (poll.getStatus() == PollStatus.RUNNING) {
-            if (poll.getChoices().contains(answer)) {
-                if (poll.getParticipantVotes().containsKey(participant)) {
-                    Choice option = poll.getParticipantVotes().get(participant);
-                    poll.removeVote(participant, option);
-                }
-                int numVotes = poll.getVotes().get(answer) == null ? 0 : poll.getVotes().get(answer);
-                poll.getVotes().put(answer, ++numVotes);
-                poll.getParticipantVotes().put(participant, answer);
-            } else {
-                throw new WrongChoicePollException("Choice does not exists.");
-            }
+    public String addVote(Choice choice) throws PollException {
+        validatePollChoice(choice);
+        poll.incrementVoteCount(choice);
+        String pin;
+        do {
+            pin = generatePin();
+        } while (poll.getParticipantVotes().containsKey(pin));
+        poll.getParticipantVotes().put(pin, choice);
+        return pin;
+    }
+
+    @Override
+    public void updateVote(String pin, Choice newChoice) throws PollException {
+        validatePollChoice(newChoice);
+        if (poll.getParticipantVotes().containsKey(pin)) {
+            Choice previousChoice = poll.getParticipantVotes().get(pin);
+            poll.decrementVoteCount(previousChoice);
+            poll.getParticipantVotes().remove(pin);
+            poll.getParticipantVotes().put(pin, newChoice);
         } else {
-            throw new WrongStatePollException("A Poll not in RUNNING state cannot receive a vote.");
+            throw new PollException("The pin does not exist.");
         }
     }
 
@@ -111,5 +122,16 @@ public class PollReadyState extends PollState {
         }
     }
 
+    private String generatePin() {
+        return IntStream.range(0, 6).map(i -> new SecureRandom().nextInt(PollReadyState.charsForPin.length())).mapToObj(randomInt -> String.valueOf(PollReadyState.charsForPin.charAt(randomInt))).collect(Collectors.joining());
+    }
 
+    private void validatePollChoice(Choice choice) throws PollException {
+        if (poll.getStatus() != PollStatus.RUNNING) {
+            throw new WrongStatePollException("A Poll not in RUNNING state cannot receive a vote.");
+        }
+        if (!poll.getChoices().contains(choice)) {
+            throw new WrongChoicePollException("Choice does not exists.");
+        }
+    }
 }

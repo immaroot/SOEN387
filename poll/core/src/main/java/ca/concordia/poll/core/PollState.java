@@ -1,8 +1,7 @@
 package ca.concordia.poll.core;
 
-import ca.concordia.poll.core.exceptions.ClosedPollException;
 import ca.concordia.poll.core.exceptions.PollException;
-import ca.concordia.poll.core.exceptions.WrongStatePollException;
+import ca.concordia.poll.core.users.Participant;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -29,7 +28,9 @@ public abstract class PollState {
 
     abstract public void close() throws PollException;
 
-    abstract public void addVote(Participant participant, Choice answer) throws PollException;
+    abstract public String addVote(Choice choice) throws PollException;
+
+    abstract public void updateVote(String pin, Choice choice) throws PollException;
 
     abstract public Hashtable<String, Integer> getResults() throws PollException;
 }

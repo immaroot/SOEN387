@@ -7,39 +7,30 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+
 public class Poll implements Serializable {
 
-    private static Poll poll;
-    private String name, question;
+    private String title, question;
     private PollStatus status;
     private List<Choice> choices;
     private final Hashtable<Choice, Integer> votes;
-    private final Hashtable<Participant, Choice> participantVotes;
+    private final Hashtable<String, Choice> participantVotes;
     private PollState state;
 
-    private Poll() {
+    public Poll() {
         this.state = new PollClosedState(this);
         this.status = PollStatus.CREATED;
         this.choices = new ArrayList<>();
         this.votes = new Hashtable<>();
         this.participantVotes = new Hashtable<>();
-        poll = this;
     }
 
-    public static Poll getInstance() {
-        if (poll == null) {
-            return new Poll();
-        } else {
-            return poll;
-        }
+    public void create(String title, String question, List<Choice> choices) throws PollException {
+        state.create(title, question, choices);
     }
 
-    public void create(String name, String question, List<Choice> choices) throws PollException {
-        state.create(name, question, choices);
-    }
-
-    public void update(String name, String question, List<Choice> choices) throws PollException {
-        state.update(name, question, choices);
+    public void update(String title, String question, List<Choice> choices) throws PollException {
+        state.update(title, question, choices);
     }
 
     public void run() throws PollException {
@@ -62,14 +53,12 @@ public class Poll implements Serializable {
         state.close();
     }
 
-    public void addVote(Participant participant, Choice answer) throws PollException {
-        state.addVote(participant, answer);
+    public String addVote(Choice choice) throws PollException {
+        return state.addVote(choice);
     }
 
-    public void removeVote(Participant participant, Choice choice) {
-        int currentNumberOfVotes = votes.get(choice);
-        votes.put(choice, --currentNumberOfVotes);
-        participantVotes.remove(participant);
+    public void updateVote(String pin, Choice choice) throws PollException {
+        state.updateVote(pin, choice);
     }
 
     public Hashtable<String, Integer> getResults() throws PollException {
@@ -80,16 +69,16 @@ public class Poll implements Serializable {
         this.state = state;
     }
 
-    protected void setName(String name) {
-        this.name = name;
+    protected void setTitle(String title) {
+        this.title = title;
     }
 
     protected void setQuestion(String question) {
         this.question = question;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public String getQuestion() {
@@ -116,7 +105,7 @@ public class Poll implements Serializable {
         return votes;
     }
 
-    protected Hashtable<Participant, Choice> getParticipantVotes() {
+    protected Hashtable<String, Choice> getParticipantVotes() {
         return participantVotes;
     }
 
@@ -128,10 +117,21 @@ public class Poll implements Serializable {
         return state.getClass() == PollReadyState.class;
     }
 
+    public void incrementVoteCount(Choice choice) {
+        int numVotes = votes.get(choice) == null ? 0 : votes.get(choice);
+        votes.put(choice, ++numVotes);
+    }
+
+    public void decrementVoteCount(Choice choice) {
+        int numVotes = votes.get(choice) == null ? 0 : votes.get(choice);
+        if (numVotes < 0)
+            votes.put(choice, --numVotes);
+    }
+
     @Override
     public String toString() {
         return "Poll{" +
-                "name='" + name + '\'' +
+                "title='" + title + '\'' +
                 ", question='" + question + '\'' +
                 ", status=" + status +
                 ", choices=" + choices +

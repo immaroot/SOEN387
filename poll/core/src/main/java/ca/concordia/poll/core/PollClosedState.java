@@ -2,6 +2,7 @@ package ca.concordia.poll.core;
 
 import ca.concordia.poll.core.exceptions.ClosedPollException;
 import ca.concordia.poll.core.exceptions.PollException;
+import ca.concordia.poll.core.users.Participant;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -15,7 +16,7 @@ public class PollClosedState extends PollState{
     @Override
     public void create(String name, String question, List<Choice> choices) {
         poll.setStatus(PollStatus.CREATED);
-        poll.setName(name);
+        poll.setTitle(name);
         poll.setQuestion(question);
         poll.setChoices(choices);
         poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
@@ -53,7 +54,12 @@ public class PollClosedState extends PollState{
     }
 
     @Override
-    public void addVote(Participant participant, Choice answer) throws PollException {
+    public String addVote(Choice answer) throws PollException {
+        throw new ClosedPollException("The poll is not yet opened..");
+    }
+
+    @Override
+    public void updateVote(String pin, Choice choice) throws PollException {
         throw new ClosedPollException("The poll is not yet opened..");
     }
 
