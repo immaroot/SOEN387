@@ -1,19 +1,25 @@
-package ca.concordia.poll.core;
+package ca.concordia.poll.core.users;
 
+import ca.concordia.poll.core.Poll;
 import ca.concordia.poll.core.exceptions.PollException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.Objects;
 
-public class User {
+public class User implements Serializable {
 
-    String name;
-    Poll poll;
+    private Poll poll;
 
-    public User(String name, Poll poll) {
-        this.name = name;
+    public User() {
+    }
+
+    public Poll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Poll poll) {
         this.poll = poll;
     }
 
@@ -25,22 +31,5 @@ public class User {
         getPollResults().forEach((s, integer) -> {
             printWriter.write(s + ": \t\t\t" + integer.toString() + "\n");
         });
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return name.equals(user.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
     }
 }
