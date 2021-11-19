@@ -33,4 +33,9 @@ public abstract class PollState {
     abstract public void updateVote(String pin, Choice choice) throws PollException;
 
     abstract public Hashtable<String, Integer> getResults() throws PollException;
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

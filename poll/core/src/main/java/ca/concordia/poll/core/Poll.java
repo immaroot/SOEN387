@@ -10,7 +10,8 @@ import java.util.List;
 
 public class Poll implements Serializable {
 
-    private String title, question;
+    private String pollID, title, question;
+    private int createdBy;
     private PollStatus status;
     private List<Choice> choices;
     private final Hashtable<Choice, Integer> votes;
@@ -65,15 +66,31 @@ public class Poll implements Serializable {
         return state.getResults();
     }
 
-    public void changeState(PollState state) {
+    public String getPollID() {
+        return pollID;
+    }
+
+    public void setPollID(String pollID) {
+        this.pollID = pollID;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    protected void changeState(PollState state) {
         this.state = state;
     }
 
-    protected void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    protected void setQuestion(String question) {
+    public void setQuestion(String question) {
         this.question = question;
     }
 
@@ -93,7 +110,7 @@ public class Poll implements Serializable {
         this.status = status;
     }
 
-    protected void setChoices(List<Choice> choices) {
+    public void setChoices(List<Choice> choices) {
         this.choices = choices;
     }
 
@@ -107,14 +124,6 @@ public class Poll implements Serializable {
 
     protected Hashtable<String, Choice> getParticipantVotes() {
         return participantVotes;
-    }
-
-    protected Object getState() {
-        return state;
-    }
-
-    public boolean isOpen() {
-        return state.getClass() == PollReadyState.class;
     }
 
     public void incrementVoteCount(Choice choice) {
@@ -131,8 +140,10 @@ public class Poll implements Serializable {
     @Override
     public String toString() {
         return "Poll{" +
-                "title='" + title + '\'' +
+                "pollID='" + pollID + '\'' +
+                ", title='" + title + '\'' +
                 ", question='" + question + '\'' +
+                ", createdBy=" + createdBy +
                 ", status=" + status +
                 ", choices=" + choices +
                 ", votes=" + votes +
