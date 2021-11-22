@@ -1,6 +1,8 @@
 package ca.concordia.poll.app.controllers;
 
-import ca.concordia.poll.core.PollManager;
+import ca.concordia.poll.app.auth.UserManager;
+import ca.concordia.poll.core.exceptions.UserManagementException;
+import ca.concordia.poll.core.users.PollManager;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -9,8 +11,6 @@ import java.io.IOException;
 
 @WebServlet(name = "AdminLoginServlet", value = "/login")
 public class AdminLoginServlet extends HttpServlet {
-
-    String managerPass = "secretpass";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,11 +24,22 @@ public class AdminLoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
 
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         System.out.println(password);
 
-        if (password != null && password.equals(managerPass)) {
+        UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
+
+        PollManager pollManager = null;
+
+        try {
+            pollManager = (PollManager) userManager.login(email, password);
+        } catch (UserManagementException e) {
+            e.printStackTrace();
+        }
+
+        if (pollManager != null) {
 
             HttpSession oldSession = request.getSession(false);
             if (oldSession != null) {
@@ -39,7 +50,6 @@ public class AdminLoginServlet extends HttpServlet {
             newSession.setAttribute("admin", true);
             newSession.setMaxInactiveInterval(60*10);
 
-            newSession.setAttribute("user", new PollManager("Joe"));
 
             response.sendRedirect(getServletContext().getContextPath() + "/admin");
 

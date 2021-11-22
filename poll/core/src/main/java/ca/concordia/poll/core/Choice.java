@@ -1,11 +1,14 @@
 package ca.concordia.poll.core;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Choice {
+public class Choice implements Serializable {
 
-    String title;
-    String description;
+    String title, description;
+
+    public Choice() {
+    }
 
     public Choice(String title) {
         this.title = title;
@@ -22,6 +25,14 @@ public class Choice {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

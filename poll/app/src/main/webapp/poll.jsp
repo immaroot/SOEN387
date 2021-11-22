@@ -1,4 +1,4 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +14,7 @@
         <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
             <div class="row pb-5">
                 <div class="col">
-                    <h2 class="text-center">${poll.name}</h2>
+                    <h2 class="text-center">test</h2>
                 </div>
             </div>
 

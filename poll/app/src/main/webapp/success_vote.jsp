@@ -23,7 +23,8 @@
                             <div class="mx-auto my-auto justify-content-center p-5">
                                 <jsp:useBean id="vote" scope="request" type="ca.concordia.poll.core.Choice" />
                                 <h4 class="text-center">
-                                    You have voted for: ${vote.title}
+                                    You have voted for: ${vote.title} .
+                                    You're pin is: <c:out value="pin" />
                                 </h4>
                             </div>
                         </div>

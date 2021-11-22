@@ -1,5 +1,6 @@
 package ca.concordia.poll.app.controllers;
 
+import ca.concordia.poll.core.users.PollManager;
 import ca.concordia.poll.core.exceptions.PollException;
 import ca.concordia.poll.core.Choice;
 import ca.concordia.poll.core.Poll;
@@ -23,7 +24,7 @@ public class CreatePollServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Poll poll = Poll.getInstance();
+//        Poll poll = Poll.getInstance();
         String name = request.getParameter("name");
         String question = request.getParameter("question");
         String[] options = request.getParameterValues("choice");
@@ -35,11 +36,11 @@ public class CreatePollServlet extends HttpServlet {
             choices.add(new Choice(options[i], descriptions[i]));
         }
 
-        try {
-            poll.create(name, question, choices);
-        } catch (PollException e) {
-            throw new ServletException(e);
-        }
+//        try {
+//            poll.create(name, question, choices, (PollManager) request.getServletContext().getAttribute("manager"));
+//        } catch (PollException e) {
+//            throw new ServletException(e);
+//        }
 
         response.setContentType("text/html");
         response.sendRedirect(getServletContext().getContextPath() + "/admin");

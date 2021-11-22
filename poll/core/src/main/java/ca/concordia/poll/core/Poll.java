@@ -14,8 +14,8 @@ public class Poll implements Serializable {
     private int createdBy;
     private PollStatus status;
     private List<Choice> choices;
-    private final Hashtable<Choice, Integer> votes;
-    private final Hashtable<String, Choice> participantVotes;
+    private Hashtable<Choice, Integer> votes;
+    private Hashtable<String, Choice> participantVotes;
     private PollState state;
 
     public Poll() {
@@ -106,7 +106,7 @@ public class Poll implements Serializable {
         return status;
     }
 
-    protected void setStatus(PollStatus status) {
+    public void setStatus(PollStatus status) {
         this.status = status;
     }
 
@@ -118,17 +118,33 @@ public class Poll implements Serializable {
         return choices;
     }
 
-    protected Hashtable<Choice, Integer> getVotes() {
+    public void setVotes(Hashtable<Choice, Integer> votes) {
+        this.votes = votes;
+    }
+
+    public void setParticipantVotes(Hashtable<String, Choice> participantVotes) {
+        this.participantVotes = participantVotes;
+    }
+
+    public Hashtable<Choice, Integer> getVotes() {
         return votes;
     }
 
-    protected Hashtable<String, Choice> getParticipantVotes() {
+    public Hashtable<String, Choice> getParticipantVotes() {
         return participantVotes;
     }
 
     public void incrementVoteCount(Choice choice) {
         int numVotes = votes.get(choice) == null ? 0 : votes.get(choice);
         votes.put(choice, ++numVotes);
+    }
+
+    public PollState getState() {
+        return state;
+    }
+
+    public void setState(PollState state) {
+        this.state = state;
     }
 
     public void decrementVoteCount(Choice choice) {
@@ -150,5 +166,9 @@ public class Poll implements Serializable {
                 ", participantVotes=" + participantVotes +
                 ", state=" + state +
                 '}';
+    }
+
+    public boolean isOpen() {
+        return state.getClass() == PollReadyState.class;
     }
 }
