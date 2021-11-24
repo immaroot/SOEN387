@@ -1,92 +1,42 @@
 package ca.concordia.poll.app.controllers;
 
-import ca.concordia.poll.app.services.AppPollRepository;
 import ca.concordia.poll.core.*;
 import ca.concordia.poll.core.exceptions.ClosedPollException;
 import ca.concordia.poll.core.exceptions.PollException;
 import ca.concordia.poll.core.exceptions.WrongChoicePollException;
+import ca.concordia.poll.core.services.PollRepository;
 import ca.concordia.poll.core.users.Participant;
-import ca.concordia.poll.core.users.PollManager;
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @WebServlet(name = "VoteServlet", value = "/poll/*")
 public class VoteServlet extends HttpServlet {
     Poll poll;
+    PollRepository repository;
 
-//    PollManager manager;
-//    Poll poll;
-//    HashMap<Integer, Choice> choiceHashMap;
-
-//    @Override
-//    public void init() throws ServletException {
-//        super.init();
-//        manager = new PollManager();
-//        manager.setEmail("example@example.com");
-//
-//        manager.setPoll(new Poll());
-//
-//        poll = manager.getPoll();
-//
-//        System.out.println(manager);
-//
-//
-//        choiceHashMap = new HashMap<>();
-//
-//        Choice option1 = new Choice("banana");
-//        Choice option2 = new Choice("raspberries");
-//        Choice option3 = new Choice("apple");
-//        Choice option4 = new Choice("cherries");
-//        Choice option5 = new Choice("peaches");
-//
-//        List<Choice> choices = new ArrayList<>();
-//
-//
-//        choices.add(option1);
-//        choices.add(option2);
-//        choices.add(option3);
-//        choices.add(option3);
-//        choices.add(option4);
-//        choices.add(option5);
-//
-//        try {
-//            manager.createPoll("Favorite Fruits", "What is your favorite fruit?", choices);
-//        } catch (PollException e) {
-//            throw new ServletException(e);
-//        }
-//
-//        try {
-//            manager.runPoll();
-//        } catch (PollException e) {
-//            throw new ServletException(e);
-//        }
-//    }
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        repository = (PollRepository) getServletContext().getAttribute("pollRepository");
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html");
 
-        AppPollRepository repository = (AppPollRepository) request.getServletContext().getAttribute("pollRepository");
-
-        System.out.println(repository != null ? "exists!" : "it doesn't exists...");
-
         String pollID = request.getPathInfo().replaceFirst("/", "");
 
         try {
-            assert repository != null;
             poll = repository.findById(pollID);
         } catch (PollException e) {
             e.printStackTrace();
         }
 
-        assert poll != null;
         if (poll.isOpen()) {
             PollStatus status = poll.getStatus();
             switch (status) {
@@ -110,20 +60,15 @@ public class VoteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        AppPollRepository repository = (AppPollRepository) request.getServletContext().getAttribute("pollRepository");
-
-        System.out.println(repository != null ? "exists!" : "it doesn't exists...");
+        response.setContentType("text/html");
 
         String pollID = request.getPathInfo().replaceFirst("/", "");
 
         try {
-            assert repository != null;
             poll = repository.findById(pollID);
         } catch (PollException e) {
             e.printStackTrace();
         }
-
-        assert poll != null;
 
         if (poll.isOpen() && poll.getStatus() == PollStatus.RUNNING) {
 
@@ -144,10 +89,9 @@ public class VoteServlet extends HttpServlet {
                     String pin = user.vote(choice);
                     repository.save(poll);
                     System.out.println("A user just voted.");
-                    response.setContentType("text/html");
                     request.setAttribute("vote", choice);
                     request.setAttribute("pin", pin);
-                    RequestDispatcher rd = request.getRequestDispatcher("./success_vote.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("/success_vote.jsp");
                     rd.forward(request, response);
                 } catch (PollException e) {
                     throw new ServletException(e);
@@ -169,12 +113,13 @@ public class VoteServlet extends HttpServlet {
     }
 
     private void pollReleased(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("/results");
+        RequestDispatcher rd = request.getRequestDispatcher("/results/" + poll.getPollID());
         rd.forward(request, response);
     }
 
     private void pollRunning(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("./poll.jsp");
+        System.out.println("trying to forward to poll.jsp..");
+        RequestDispatcher rd = request.getRequestDispatcher("/poll.jsp");
         request.setAttribute("poll", poll);
         rd.forward(request, response);
     }

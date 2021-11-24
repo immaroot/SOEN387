@@ -14,7 +14,7 @@
         <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
             <div class="row pb-5">
                 <div class="col">
-                    <h2 class="text-center">test</h2>
+                    <h2 class="text-center">${poll.title}</h2>
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
                             ${poll.question}
                         </h4>
                         <div class="card-body">
-                            <form action="${pageContext.request.contextPath}/" method="post">
+                            <form action="${pageContext.request.contextPath}/poll/${poll.pollID}" method="post">
                                 <ul class="list-group mb-3">
                                 <c:forEach items="${poll.choices}" var="choice" varStatus="loop">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">

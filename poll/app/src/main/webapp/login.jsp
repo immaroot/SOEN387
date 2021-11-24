@@ -25,6 +25,12 @@
                             </c:if>
                             <form action="${pageContext.request.contextPath}/login" method="post">
                                 <div class="mb-2">
+                                    <label for="email">Email:</label>
+                                </div>
+                                <div class="mb-2">
+                                    <input type="text" name="email" id="email">
+                                </div>
+                                <div class="mb-2">
                                     <label for="pass">Password:</label>
                                 </div>
                                 <div class="mb-2">

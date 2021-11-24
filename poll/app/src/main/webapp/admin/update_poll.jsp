@@ -1,7 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean id="name" scope="request" type="java.lang.String"/>
-<jsp:useBean id="question" scope="request" type="java.lang.String" />
-<jsp:useBean id="choices" scope="request" type="java.util.List<ca.concordia.poll.core.Choice>" />
+<jsp:useBean id="poll" scope="request" type="ca.concordia.poll.core.Poll"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,14 +21,14 @@
       <div class="row">
         <div class="col">
           <div class="card">
-            <form action="${pageContext.request.contextPath}/admin/update" method="post">
+            <form action="${pageContext.request.contextPath}/admin/update?poll=${poll.pollID}" method="post">
               <div class="card-body">
                 <div class="row">
                     <div class="mb-5 px-4">
                       <label for="name">
                         Name of the Poll
                       </label>
-                      <input type="text" class="form-control" id="name" name="name" value="${name}"/>
+                      <input type="text" class="form-control" id="name" name="name" value="${poll.title}"/>
                     </div>
                   </div>
                   <div class="row">
@@ -38,13 +36,13 @@
                       <label for="question">
                         The Question
                       </label>
-                      <input type="text" class="form-control" id="question" name="question" value="${question}"/>
+                      <input type="text" class="form-control" id="question" name="question" value="${poll.question}"/>
                     </div>
                   </div>
                   <div class="row">
                     <div class="mb-2">
                       <ul class="list-group">
-                        <c:forEach items="${choices}" var="choice" varStatus="loop" >
+                        <c:forEach items="${poll.choices}" var="choice" varStatus="loop" >
                           <li class="list-group-item">
                             <div class="mb-3">
                               <label for="choice${loop.count}">
@@ -89,7 +87,7 @@
     console.log("Ready!");
   });
 
-  let i = ${choices.size()};
+  let i = ${poll.choices.size()};
 
   $("#addNewRow").click(function() {
     let html = '';

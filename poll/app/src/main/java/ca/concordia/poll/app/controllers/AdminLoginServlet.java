@@ -48,8 +48,8 @@ public class AdminLoginServlet extends HttpServlet {
 
             HttpSession newSession = request.getSession(true);
             newSession.setAttribute("admin", true);
+            newSession.setAttribute("user", pollManager);
             newSession.setMaxInactiveInterval(60*10);
-
 
             response.sendRedirect(getServletContext().getContextPath() + "/admin");
 

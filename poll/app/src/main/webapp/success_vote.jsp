@@ -22,9 +22,10 @@
                         <div class="card-body">
                             <div class="mx-auto my-auto justify-content-center p-5">
                                 <jsp:useBean id="vote" scope="request" type="ca.concordia.poll.core.Choice" />
+                                <jsp:useBean id="pin" scope="request" type="java.lang.String"/>
                                 <h4 class="text-center">
                                     You have voted for: ${vote.title} .
-                                    You're pin is: <c:out value="pin" />
+                                    You're pin is: ${pin}
                                 </h4>
                             </div>
                         </div>

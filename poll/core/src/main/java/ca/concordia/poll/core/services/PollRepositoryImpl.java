@@ -5,6 +5,7 @@ import ca.concordia.poll.core.exceptions.PollException;
 
 import java.security.SecureRandom;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,6 +34,11 @@ public class PollRepositoryImpl implements PollRepository {
             return polls.get(id);
         }
         throw new PollException("No Polls exist with this ID.");
+    }
+
+    @Override
+    public List<Poll> getAllPollsForAuthenticatedUser(int userID) {
+        return null;
     }
 
     private String generateId() {

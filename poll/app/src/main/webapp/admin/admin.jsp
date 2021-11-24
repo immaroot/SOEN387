@@ -1,6 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean id="status" scope="request" type="java.lang.String"/>
-<jsp:useBean id="pollIsOpen" scope="request" type="java.lang.Boolean"/>
+<jsp:useBean id="poll" scope="request" type="ca.concordia.poll.core.Poll"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +14,11 @@
         <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9">
             <div class="row pb-5">
                 <div class="col">
+                    <a class="btn btn-danger" href="${pageContext.request.contextPath}/logout">Logout</a>
+                </div>
+            </div>
+            <div class="row pb-5">
+                <div class="col">
                     <h2 class="text-center">Admin Section</h2>
                 </div>
             </div>
@@ -23,29 +27,29 @@
                     <div class="card">
                         <div class="mx-auto my-auto justify-content-center p-5">
                             <h4>
-                                The poll is currently in <c:choose><c:when test="${pollIsOpen}">OPEN</c:when><c:otherwise>CLOSED</c:otherwise></c:choose> state.
+                                The poll is currently in <c:choose><c:when test="${poll.open}">OPEN</c:when><c:otherwise>CLOSED</c:otherwise></c:choose> state.
                             </h4>
                             <h4>
-                                The poll has currently a ${status} status.
+                                The poll has currently a ${poll.status} status.
                             </h4>
                         </div>
                         <div class="card-footer">
-                            <form action="admin" method="post">
+                            <form action="admin?poll=${poll.pollID}" method="post">
                                 <div class="d-flex justify-content-between">
                                     <div>
                                     <c:choose>
-                                        <c:when test="${pollIsOpen}">
-                                            <c:if test="${status == 'CREATED'}">
+                                        <c:when test="${poll.open}">
+                                            <c:if test="${poll.status == 'CREATED'}">
                                                 <button class="btn btn-primary" name="action" value="run">Run Poll</button>
                                             </c:if>
-                                            <c:if test="${(status == 'CREATED' || status == 'RUNNING')}">
+                                            <c:if test="${(poll.status == 'CREATED' || poll.status == 'RUNNING')}">
                                                 <button class="btn btn-primary" name="action" value="update">Update</button>
                                             </c:if>
-                                            <c:if test="${status == 'RUNNING'}">
+                                            <c:if test="${poll.status == 'RUNNING'}">
                                                 <button class="btn btn-primary" name="action" value="release">Release</button>
                                                 <button class="btn btn-primary" name="action" value="clear">Clear</button>
                                             </c:if>
-                                            <c:if test="${status == 'RELEASED'}">
+                                            <c:if test="${poll.status == 'RELEASED'}">
                                                 <button class="btn btn-primary" name="action" value="clear">Clear</button>
                                                 <button class="btn btn-primary" name="action" value="unrelease">Unrelease</button>
                                                 <button class="btn btn-primary" name="action" value="close">Close</button>
@@ -55,9 +59,6 @@
                                             <button class="btn btn-primary" name="action" value="create">Create</button>
                                         </c:otherwise>
                                     </c:choose>
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-danger" name="action" value="logout">Logout</button>
                                     </div>
                                 </div>
                             </form>

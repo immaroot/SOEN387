@@ -6,7 +6,7 @@
     "password" : "pass"
   },
   {
-    "userID" : 2,
+    "userID" : 0,
     "fullName" : "Another Name",
     "email" : "another@example.com",
     "password" : "secret"
