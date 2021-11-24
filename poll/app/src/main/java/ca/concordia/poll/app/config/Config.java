@@ -5,6 +5,7 @@ import ca.concordia.poll.app.auth.UserRepository;
 import ca.concordia.poll.app.services.AppPollRepository;
 import ca.concordia.poll.core.Choice;
 import ca.concordia.poll.core.Poll;
+import ca.concordia.poll.core.PollStatus;
 import ca.concordia.poll.core.exceptions.PollException;
 import ca.concordia.poll.core.exceptions.UserManagementException;
 import ca.concordia.poll.core.users.AuthenticatedUser;
@@ -32,6 +33,9 @@ public class Config implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+
+        System.out.println("Should be executed only once.");
+
         ServletContextListener.super.contextInitialized(sce);
         try {
             config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("app.properties"));
@@ -54,23 +58,26 @@ public class Config implements ServletContextListener {
         PollManager[] managers = gson.fromJson(bufferedReader, PollManager[].class);
 
         UserRepository userRepository = new UserRepository();
-        UserManager userManager = new UserManager(userRepository);
 
         for (AuthenticatedUser user : managers) {
             try {
-                userManager.register(user);
+                userRepository.saveAuthenticatedUser(user);
             } catch (UserManagementException e) {
                 e.printStackTrace();
             }
         }
 
-        AppPollRepository repository = new AppPollRepository();
-        Poll poll = createTestPoll();
+        AppPollRepository pollRepository = new AppPollRepository();
+        UserManager userManager = new UserManager(userRepository);
+//        Poll poll = createTestPoll();
+//
+//        pollRepository.save(poll);
 
-        repository.save(poll);
-
+        sce.getServletContext().setAttribute("userRepository", userRepository);
         sce.getServletContext().setAttribute("userManager", userManager);
-        sce.getServletContext().setAttribute("pollRepository", repository);
+        sce.getServletContext().setAttribute("pollRepository", pollRepository);
+
+        System.out.println("HELLO FROM CONFIG!!!");
 
     }
 
@@ -100,7 +107,6 @@ public class Config implements ServletContextListener {
         choices.add(option1);
         choices.add(option2);
         choices.add(option3);
-        choices.add(option3);
         choices.add(option4);
         choices.add(option5);
 
@@ -110,6 +116,7 @@ public class Config implements ServletContextListener {
         } catch (PollException e) {
             e.printStackTrace();
         }
+        poll.setStatus(PollStatus.RUNNING);
         return poll;
     }
 }

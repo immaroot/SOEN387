@@ -22,6 +22,7 @@
                         <div class="card-body justify-content-center">
                             <div class="mx-auto my-auto justify-content-center">
                                 <jsp:useBean id="results" scope="request" type="java.util.HashMap<java.lang.String,java.lang.Integer>"/>
+                                <jsp:useBean id="poll" scope="request" type="ca.concordia.poll.core.Poll" />
                                 <c:forEach items="${results}" var="entry">
                                     <div class="list-group">
                                         <ul class="list-group mb-3">
@@ -35,7 +36,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <form action="${pageContext.request.contextPath}/download" method="get">
+                            <form action="${pageContext.request.contextPath}/download/${poll.pollID}" method="get">
                                 <div class="form-group">
                                     <label for="format">Choose format to download</label>
                                     <select class="form-control" id="format">

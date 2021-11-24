@@ -1,8 +1,8 @@
 package ca.concordia.poll.app.controllers;
 
-import ca.concordia.poll.app.services.AppPollRepository;
 import ca.concordia.poll.core.exceptions.PollException;
 import ca.concordia.poll.core.Poll;
+import ca.concordia.poll.core.services.PollRepository;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -12,32 +12,35 @@ import java.util.HashMap;
 
 @WebServlet(name = "ResultsServlet", value = "/results/*")
 public class ResultsServlet extends HttpServlet {
+
+    Poll poll;
+    PollRepository repository;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        repository = (PollRepository) getServletContext().getAttribute("pollRepository");
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        AppPollRepository repository = (AppPollRepository) getServletContext().getAttribute("pollRepository");
-
-        System.out.println(repository != null ? "exists!" : "it doesn't exists...");
-
         String pollID = request.getPathInfo().replaceFirst("/", "");
 
-        Poll poll = null;
         try {
-            assert repository != null;
             poll = repository.findById(pollID);
         } catch (PollException e) {
             e.printStackTrace();
+            throw new ServletException("No poll with that id.");
         }
-
-        assert poll != null;
-
 
         response.setContentType("text/html");
 
-        HashMap<String, Integer> results = null;
+        HashMap<String, Integer> results;
         try {
             results = new HashMap<>(poll.getResults());
             request.setAttribute("results", results);
+            request.setAttribute("poll", poll);
             RequestDispatcher rd = request.getRequestDispatcher("/results.jsp");
             rd.forward(request, response);
         } catch (PollException e) {
