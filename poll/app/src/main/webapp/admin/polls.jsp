@@ -23,7 +23,7 @@
                 </div>
             </div>
             <c:forEach items="${polls}" var="poll" varStatus="loop">
-                <div class="row">
+                <div class="row pb-5">
                     <div class="col">
                         <div class="card">
                             <div class="mx-auto my-auto justify-content-center p-5">
@@ -59,9 +59,6 @@
                                                         <button class="btn btn-primary" name="action" value="close">Close</button>
                                                     </c:if>
                                                 </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-primary" name="action" value="create">Create</button>
-                                                </c:otherwise>
                                             </c:choose>
                                         </div>
                                     </div>
@@ -71,6 +68,11 @@
                     </div>
                 </div>
             </c:forEach>
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-primary" href="${pageContext.request.contextPath}/admin/create">Create New Poll</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

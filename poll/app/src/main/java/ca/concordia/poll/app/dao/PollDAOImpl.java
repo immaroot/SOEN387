@@ -89,9 +89,9 @@ public class PollDAOImpl implements PollDAO {
     }
 
     private void saveAllVotes(Poll poll) {
-        for (Map.Entry<String, Choice> entry : poll.getParticipantVotes().entrySet()) {
-            String pin = entry.getKey();
-            Choice choice = entry.getValue();
+        for (Vote vote : poll.getVotes()) {
+            String pin = vote.getPin();
+            Choice choice = vote.getChoice();
             saveVote(poll, pin, choice);
         }
     }
@@ -156,14 +156,14 @@ public class PollDAOImpl implements PollDAO {
         }
     }
 
-    private void updateChoice(Poll poll, int i) {
+    private void updateChoice(Poll poll, int choiceID) {
         String query = "UPDATE choices SET title=?, description=? WHERE poll_id=? AND id=?";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, poll.getChoices().get(i).getTitle());
-            ps.setString(2, poll.getChoices().get(i).getDescription());
+            ps.setString(1, poll.getChoices().get(choiceID).getTitle());
+            ps.setString(2, poll.getChoices().get(choiceID).getDescription());
             ps.setString(3, poll.getPollID());
-            ps.setInt(4, i);
+            ps.setInt(4, choiceID);
             ps.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -171,9 +171,9 @@ public class PollDAOImpl implements PollDAO {
     }
 
     private void updateAllVotes(Poll poll) {
-        for (Map.Entry<String, Choice> entry : poll.getParticipantVotes().entrySet()) {
-            String pin = entry.getKey();
-            Choice choice = entry.getValue();
+        for (Vote vote : poll.getVotes()) {
+            String pin = vote.getPin();
+            Choice choice = vote.getChoice();
             System.out.println(isUpdate(pin));
             if (isUpdate(pin)) {
                 updateVote(poll, pin, choice);
@@ -186,7 +186,7 @@ public class PollDAOImpl implements PollDAO {
     }
 
     private void deleteExtraVotes(Poll poll) {
-        String deleteQuery = "DELETE FROM votes WHERE poll_id=? AND pin NOT IN " + poll.getParticipantVotes().keySet().stream().collect(Collectors.joining("','", "('", "')"));
+        String deleteQuery = "DELETE FROM votes WHERE poll_id=? AND pin NOT IN " + poll.getVotes().stream().map(Vote::getPin).collect(Collectors.joining("','", "('", "')"));
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(deleteQuery)) {
             ps.setString(1, poll.getPollID());
@@ -229,14 +229,18 @@ public class PollDAOImpl implements PollDAO {
     @Override
     public List<Choice> getChoices(String pollID) {
         List<Choice> choices = new ArrayList<>();
-        String query = "SELECT title, description FROM choices WHERE poll_id=? ORDER BY id";
+        String query = "SELECT title, description, id FROM choices WHERE poll_id=? ORDER BY id";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, pollID);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                choices.add(new Choice(rs.getString("title"), rs.getString("description")));
+                Choice choice = new Choice();
+                choice.setTitle(rs.getString("title"));
+                choice.setDescription(rs.getString("description"));
+                choice.setChoiceID(rs.getInt("id"));
+                choices.add(choice);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -245,27 +249,8 @@ public class PollDAOImpl implements PollDAO {
     }
 
     @Override
-    public Hashtable<Choice, Integer> getVotes(String pollID) {
-        Hashtable<Choice, Integer> votes = new Hashtable<>();
-        String query = "SELECT count(*), choice_id FROM votes WHERE poll_id=? GROUP BY choice_id";
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, pollID);
-            ResultSet rs = ps.executeQuery();
-            List<Choice> choices = getChoices(pollID);
-
-            while (rs.next()) {
-                votes.put(choices.get(rs.getInt("choice_id")), rs.getInt("count"));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return votes;
-    }
-
-    @Override
-    public Hashtable<String, Choice> getParticipantVotes(String pollID) {
-        Hashtable<String, Choice> participantVotes = new Hashtable<>();
+    public List<Vote> getVotes(String pollID) {
+        List<Vote> votes = new ArrayList<>();
         String query = "SELECT pin, choice_id FROM votes WHERE poll_id=?";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
@@ -274,12 +259,17 @@ public class PollDAOImpl implements PollDAO {
             List<Choice> choices = getChoices(pollID);
 
             while (rs.next()) {
-                participantVotes.put(rs.getString("pin"), choices.get(rs.getInt("choice_id")));
+                String pin = rs.getString(1);
+                int choiceID = rs.getInt(2);
+                Vote vote = new Vote();
+                vote.setChoice(choices.stream().filter(choice -> choice.getChoiceID() == choiceID).findFirst().orElseThrow());
+                vote.setPin(pin);
+                votes.add(vote);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return participantVotes;
+        return votes;
     }
 
     @Override
@@ -305,15 +295,28 @@ public class PollDAOImpl implements PollDAO {
 
         String id = result.getString("id");
         Poll poll = new Poll();
-        poll.setPollID(result.getString("id"));
+        poll.setPollID(id);
+        poll.setCreatedBy(result.getInt("user_id"));
         poll.setTitle(result.getString("title"));
         poll.setQuestion(result.getString("question"));
         poll.setStatus(PollStatus.valueOf(result.getInt("status")));
         poll.setState(result.getInt("state") == 0 ? new PollClosedState(poll) : new PollReadyState(poll));
         poll.setChoices(getChoices(id));
         poll.setVotes(getVotes(id));
-        poll.setParticipantVotes(getParticipantVotes(id));
 
         return poll;
+    }
+
+    public static void main(String[] args) {
+
+        PollDAOImpl pollDAO = new PollDAOImpl();
+
+        Optional<Poll> poll = pollDAO.get("ZTA5WMYSNH");
+
+
+//        List<Poll> polls = pollDAO.getAllPollsForAuthenticatedUser(0);
+
+
+        System.out.println(poll);
     }
 }

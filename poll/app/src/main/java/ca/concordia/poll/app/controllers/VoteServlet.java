@@ -76,6 +76,7 @@ public class VoteServlet extends HttpServlet {
             user.setPoll(poll);
 
             String voteOption = request.getParameter("choice");
+            String inputPin = request.getParameter("pin");
             Choice choice = null;
             for (Choice option : poll.getChoices()) {
                 if (option.getTitle().equals(voteOption)) {
@@ -85,16 +86,29 @@ public class VoteServlet extends HttpServlet {
             }
 
             if (choice != null) {
-                try {
-                    String pin = user.vote(choice);
-                    repository.save(poll);
-                    System.out.println("A user just voted.");
-                    request.setAttribute("vote", choice);
-                    request.setAttribute("pin", pin);
-                    RequestDispatcher rd = request.getRequestDispatcher("/success_vote.jsp");
-                    rd.forward(request, response);
-                } catch (PollException e) {
-                    throw new ServletException(e);
+
+                if (!inputPin.isEmpty()) {
+                    try {
+                        user.updateVote(inputPin, choice);
+                        repository.save(poll);
+                        request.setAttribute("vote", choice);
+                        request.setAttribute("pin", inputPin);
+                        RequestDispatcher rd = request.getRequestDispatcher("/updated_vote.jsp");
+                        rd.forward(request, response);
+                    } catch (PollException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        String pin = user.vote(choice);
+                        repository.save(poll);
+                        request.setAttribute("vote", choice);
+                        request.setAttribute("pin", pin);
+                        RequestDispatcher rd = request.getRequestDispatcher("/success_vote.jsp");
+                        rd.forward(request, response);
+                    } catch (PollException e) {
+                        throw new ServletException(e);
+                    }
                 }
             } else {
                 try {
@@ -118,7 +132,6 @@ public class VoteServlet extends HttpServlet {
     }
 
     private void pollRunning(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("trying to forward to poll.jsp..");
         RequestDispatcher rd = request.getRequestDispatcher("/poll.jsp");
         request.setAttribute("poll", poll);
         rd.forward(request, response);

@@ -2,6 +2,7 @@ package ca.concordia.poll.app.dao;
 
 import ca.concordia.poll.core.Choice;
 import ca.concordia.poll.core.Poll;
+import ca.concordia.poll.core.Vote;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -19,9 +20,7 @@ public interface PollDAO {
 
     public List<Choice> getChoices(String pollID);
 
-    public Hashtable<Choice, Integer> getVotes(String pollID);
-
-    public Hashtable<String, Choice> getParticipantVotes(String pollID);
+    public List<Vote>  getVotes(String pollID);
 
     public List<Poll> getAllPollsForAuthenticatedUser(int userID);
 
