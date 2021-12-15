@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "AdminServlet", value = "/admin")
-public class AdminServlet extends HttpServlet {
+public class AuthenticatedUserServlet extends HttpServlet {
 
     List<Poll> polls;
     PollRepository repository;

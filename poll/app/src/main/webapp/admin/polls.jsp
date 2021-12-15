@@ -23,7 +23,7 @@
                 </div>
             </div>
             <c:forEach items="${polls}" var="poll" varStatus="loop">
-                <div class="row">
+                <div class="row pb-5">
                     <div class="col">
                         <div class="card">
                             <div class="mx-auto my-auto justify-content-center p-5">

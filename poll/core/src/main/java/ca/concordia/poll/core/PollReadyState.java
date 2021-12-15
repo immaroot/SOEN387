@@ -30,7 +30,6 @@ public class PollReadyState extends PollState {
             poll.setTitle(title);
             poll.setQuestion(question);
             poll.setChoices(choices);
-            poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
             if (poll.getStatus() == PollStatus.RUNNING) poll.clear();
             poll.setStatus(PollStatus.CREATED);
         } else {
@@ -51,10 +50,8 @@ public class PollReadyState extends PollState {
     public void clear() throws PollException {
         if (poll.getStatus() == PollStatus.RUNNING) {
             poll.getVotes().clear();
-            poll.getParticipantVotes().clear();
         } else if (poll.getStatus() == PollStatus.RELEASED) {
             poll.getVotes().clear();
-            poll.getParticipantVotes().clear();
             poll.setStatus(PollStatus.CREATED);
         } else {
             throw new WrongStatePollException("A Poll not in RUNNING or RELEASE state cannot clear.");
@@ -82,30 +79,36 @@ public class PollReadyState extends PollState {
     @Override
     public void close() {
         poll.getVotes().clear();
-        poll.getParticipantVotes().clear();
         poll.changeState(new PollClosedState(poll));
     }
 
     @Override
     public String addVote(Choice choice) throws PollException {
         validatePollChoice(choice);
-        poll.incrementVoteCount(choice);
         String pin;
         do {
             pin = generatePin();
-        } while (poll.getParticipantVotes().containsKey(pin));
-        poll.getParticipantVotes().put(pin, choice);
+        } while (pinExists(pin));
+        Vote vote = new Vote();
+        vote.setChoice(choice);
+        vote.setPin(pin);
+        poll.getVotes().add(vote);
         return pin;
+    }
+
+    private boolean pinExists(String pin) {
+        return poll.getVotes().stream().anyMatch(vote -> vote.getPin().equals(pin));
     }
 
     @Override
     public void updateVote(String pin, Choice newChoice) throws PollException {
         validatePollChoice(newChoice);
-        if (poll.getParticipantVotes().containsKey(pin)) {
-            Choice previousChoice = poll.getParticipantVotes().get(pin);
-            poll.decrementVoteCount(previousChoice);
-            poll.getParticipantVotes().remove(pin);
-            poll.getParticipantVotes().put(pin, newChoice);
+        if (pinExists(pin)) {
+            poll.getVotes().removeIf(vote -> vote.getPin().equals(pin));
+            Vote vote = new Vote();
+            vote.setChoice(newChoice);
+            vote.setPin(pin);
+            poll.getVotes().add(vote);
         } else {
             throw new PollException("The pin does not exist.");
         }
@@ -115,7 +118,7 @@ public class PollReadyState extends PollState {
     public Hashtable<String, Integer> getResults() throws WrongStatePollException {
         if (poll.getStatus() == PollStatus.RELEASED) {
             Hashtable<String, Integer> results = new Hashtable<>();
-            poll.getVotes().forEach((key, value) -> results.put(key.getTitle(), value));
+            poll.getChoices().forEach(choice -> results.put(choice.getTitle(), (int) poll.getVotes().stream().filter(vote -> vote.getChoice().equals(choice)).count()));
             return results;
         } else {
             throw new WrongStatePollException("A Poll not in RELEASE state cannot get results.");

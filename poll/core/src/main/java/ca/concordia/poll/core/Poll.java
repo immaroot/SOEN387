@@ -14,16 +14,14 @@ public class Poll implements Serializable {
     private int createdBy;
     private PollStatus status;
     private List<Choice> choices;
-    private Hashtable<Choice, Integer> votes;
-    private Hashtable<String, Choice> participantVotes;
+    private List<Vote> votes;
     private PollState state;
 
     public Poll() {
         this.state = new PollClosedState(this);
         this.status = PollStatus.CREATED;
         this.choices = new ArrayList<>();
-        this.votes = new Hashtable<>();
-        this.participantVotes = new Hashtable<>();
+        this.votes = new ArrayList<>();
     }
 
     public void create(String title, String question, List<Choice> choices) throws PollException {
@@ -118,25 +116,12 @@ public class Poll implements Serializable {
         return choices;
     }
 
-    public void setVotes(Hashtable<Choice, Integer> votes) {
+    public void setVotes(List<Vote> votes) {
         this.votes = votes;
     }
 
-    public void setParticipantVotes(Hashtable<String, Choice> participantVotes) {
-        this.participantVotes = participantVotes;
-    }
-
-    public Hashtable<Choice, Integer> getVotes() {
+    public List<Vote> getVotes() {
         return votes;
-    }
-
-    public Hashtable<String, Choice> getParticipantVotes() {
-        return participantVotes;
-    }
-
-    public void incrementVoteCount(Choice choice) {
-        int numVotes = votes.get(choice) == null ? 0 : votes.get(choice);
-        votes.put(choice, ++numVotes);
     }
 
     public PollState getState() {
@@ -145,12 +130,6 @@ public class Poll implements Serializable {
 
     public void setState(PollState state) {
         this.state = state;
-    }
-
-    public void decrementVoteCount(Choice choice) {
-        int numVotes = votes.get(choice) == null ? 0 : votes.get(choice);
-        if (numVotes < 0)
-            votes.put(choice, --numVotes);
     }
 
     @Override
@@ -163,7 +142,6 @@ public class Poll implements Serializable {
                 ", status=" + status +
                 ", choices=" + choices +
                 ", votes=" + votes +
-                ", participantVotes=" + participantVotes +
                 ", state=" + state +
                 '}';
     }

@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "AdminFilter")
-public class AdminFilter implements Filter {
+@WebFilter(filterName = "AuthenticatedUserFilter")
+public class AuthenticatedUserFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }
 
@@ -24,16 +24,16 @@ public class AdminFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        boolean isAdmin;
+        boolean isAuthenticated;
         try {
-            isAdmin = (boolean) session.getAttribute("admin");
-            System.out.println("Admin? : " + isAdmin);
+            isAuthenticated = (boolean) session.getAttribute("authenticated");
+            System.out.println("Authenticated? : " + isAuthenticated);
         } catch (NullPointerException e){
-            isAdmin = false;
-            System.out.println("Admin? : null");
+            isAuthenticated = false;
+            System.out.println("Authenticated? : null");
         }
 
-        if (session == null || !isAdmin) {
+        if (session == null || !isAuthenticated) {
             System.out.println("Unauthorized access denied.");
             resp.sendRedirect(req.getContextPath() + "/login");
         } else {

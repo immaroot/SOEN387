@@ -19,7 +19,6 @@ public class PollClosedState extends PollState{
         poll.setTitle(name);
         poll.setQuestion(question);
         poll.setChoices(choices);
-        poll.getChoices().forEach(choice -> poll.getVotes().put(choice, 0));
         poll.changeState(new PollReadyState(poll));
     }
 

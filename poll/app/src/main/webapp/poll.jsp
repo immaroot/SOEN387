@@ -43,6 +43,10 @@
                                     </li>
                                 </c:forEach>
                                 </ul>
+                                <p>
+                                    <label for="pin">Insert pin to change your vote: </label>
+                                </p>
+                                <input type="text" id="pin" name="pin">
                                 <button type="submit" class="btn btn-success float-end">submit vote</button>
                             </form>
                         </div>

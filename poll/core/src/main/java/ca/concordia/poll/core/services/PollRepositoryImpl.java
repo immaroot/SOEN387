@@ -3,15 +3,12 @@ package ca.concordia.poll.core.services;
 import ca.concordia.poll.core.Poll;
 import ca.concordia.poll.core.exceptions.PollException;
 
-import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class PollRepositoryImpl implements PollRepository {
 
-    private final static String charsForPollID = "ABCDEFGHJKMNPQRSTUVWXYZ1234567890";
+public class PollRepositoryImpl extends AbstractPollRepository {
+
     private final Hashtable<String, Poll> polls;
 
     public PollRepositoryImpl() {
@@ -39,9 +36,5 @@ public class PollRepositoryImpl implements PollRepository {
     @Override
     public List<Poll> getAllPollsForAuthenticatedUser(int userID) {
         return null;
-    }
-
-    private String generateId() {
-        return IntStream.range(0, 10).map(i -> new SecureRandom().nextInt(PollRepositoryImpl.charsForPollID.length())).mapToObj(randomInt -> String.valueOf(PollRepositoryImpl.charsForPollID.charAt(randomInt))).collect(Collectors.joining());
     }
 }

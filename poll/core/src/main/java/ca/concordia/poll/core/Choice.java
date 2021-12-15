@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Choice implements Serializable {
 
     String title, description;
+    int choiceID;
 
     public Choice() {
     }
@@ -33,6 +34,14 @@ public class Choice implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getChoiceID() {
+        return choiceID;
+    }
+
+    public void setChoiceID(int choiceID) {
+        this.choiceID = choiceID;
     }
 
     @Override

@@ -10,14 +10,25 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 
 @WebServlet(name = "AdminLoginServlet", value = "/login")
-public class AdminLoginServlet extends HttpServlet {
+public class AuthenticatedUserLoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
-        rd.forward(request, response);
 
+        HttpSession session = request.getSession(false);
+        boolean isAuthenticated;
+        try {
+            isAuthenticated = (boolean) session.getAttribute("authenticated");
+        } catch (NullPointerException e){
+            isAuthenticated = false;
+        }
+        if (isAuthenticated) {
+            response.sendRedirect(getServletContext().getContextPath() + "/admin");
+        } else {
+            response.setContentType("text/html");
+            RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+            rd.forward(request, response);
+        }
     }
 
     @Override
@@ -47,7 +58,7 @@ public class AdminLoginServlet extends HttpServlet {
             }
 
             HttpSession newSession = request.getSession(true);
-            newSession.setAttribute("admin", true);
+            newSession.setAttribute("authenticated", true);
             newSession.setAttribute("user", pollManager);
             newSession.setMaxInactiveInterval(60*10);
 
