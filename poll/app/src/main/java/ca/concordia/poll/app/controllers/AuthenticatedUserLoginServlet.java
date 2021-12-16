@@ -1,7 +1,8 @@
 package ca.concordia.poll.app.controllers;
 
-import ca.concordia.poll.app.auth.UserManager;
+import ca.concordia.poll.app.auth.AppUserManager;
 import ca.concordia.poll.core.exceptions.UserManagementException;
+import ca.concordia.poll.core.users.AuthenticatedUser;
 import ca.concordia.poll.core.users.PollManager;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -32,25 +33,29 @@ public class AuthenticatedUserLoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        System.out.println(password);
+        AppUserManager userManager = (AppUserManager) getServletContext().getAttribute("userManager");
 
-        UserManager userManager = (UserManager) getServletContext().getAttribute("userManager");
-
-        PollManager pollManager = null;
-
+        AuthenticatedUser user;
+        PollManager manager = null;
         try {
-            pollManager = (PollManager) userManager.login(email, password);
+            user = userManager.login(email, password);
+            manager = new PollManager();
+            manager.setUserID(user.getUserID());
+            manager.setEmail(user.getEmail());
+            manager.setPassword(user.getPassword());
+            manager.setFullName(user.getFullName());
+
         } catch (UserManagementException e) {
             e.printStackTrace();
         }
 
-        if (pollManager != null) {
+        if (manager != null) {
 
             HttpSession oldSession = request.getSession(false);
             if (oldSession != null) {
@@ -59,7 +64,7 @@ public class AuthenticatedUserLoginServlet extends HttpServlet {
 
             HttpSession newSession = request.getSession(true);
             newSession.setAttribute("authenticated", true);
-            newSession.setAttribute("user", pollManager);
+            newSession.setAttribute("user", manager);
             newSession.setMaxInactiveInterval(60*10);
 
             response.sendRedirect(getServletContext().getContextPath() + "/admin");
