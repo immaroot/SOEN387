@@ -306,17 +306,4 @@ public class PollDAOImpl implements PollDAO {
 
         return poll;
     }
-
-    public static void main(String[] args) {
-
-        PollDAOImpl pollDAO = new PollDAOImpl();
-
-        Optional<Poll> poll = pollDAO.get("ZTA5WMYSNH");
-
-
-//        List<Poll> polls = pollDAO.getAllPollsForAuthenticatedUser(0);
-
-
-        System.out.println(poll);
-    }
 }

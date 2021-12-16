@@ -1,14 +1,30 @@
 package ca.concordia.poll.app.db;
 
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class DBConnection {
 
-    static final String DB_URL = "jdbc:postgresql://localhost/";
-    static final String DB_NAME = "postgres";
-    static final String DB_USER = "postgres";
-    static final String DB_PASSWORD = "secret";
+    static String DB_URL;
+    static String DB_NAME;
+    static String DB_USER;
+    static String DB_PASSWORD;
 
+    static {
+        Properties props = new Properties();
+        try {
+            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("app.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DB_URL = props.getProperty("db_url");
+        DB_NAME = props.getProperty("db_name");
+        DB_USER = props.getProperty("db_user");
+        DB_PASSWORD = props.getProperty("db_pass");
+
+
+    }
     static Connection connection = null;
 
     public static Connection getConnection() {
